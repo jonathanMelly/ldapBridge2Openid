@@ -21,13 +21,12 @@ class RequestHandler(ldapserver.LDAPRequestHandler):
             logging.log(logging.INFO, "Log attempt: " + dn)
 
             valid = web_auth(dn, decoded_password)
-
-            if not valid:
-                raise exceptions.LDAPInvalidCredentials
-
         except Exception:
             traceback.print_exc()
             raise exceptions.LDAPError
+
+        if not valid:
+            raise exceptions.LDAPInvalidCredentials
 
 
 if __name__ == '__main__':
