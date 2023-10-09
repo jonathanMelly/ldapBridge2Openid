@@ -7,6 +7,8 @@ import ldapserver
 from bridge.web import web_auth
 from ldapserver import exceptions
 
+from dotenv import load_dotenv
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -29,5 +31,6 @@ class RequestHandler(ldapserver.LDAPRequestHandler):
 
 
 if __name__ == '__main__':
+    load_dotenv()
     socketserver.ThreadingTCPServer((os.getenv("listen", '127.0.0.1'), os.getenv("port", 3890)),
                                     RequestHandler).serve_forever()
