@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 from selenium.webdriver.common.by import By
 from selenium import webdriver
@@ -22,6 +23,8 @@ def web_auth(username, password):
         options.add_argument('--headless')
 
     driver = webdriver.Chrome(options=options)
+    driver.implicitly_wait(int(os.getenv("wait", 5)))
+
     driver.get(os.getenv("portal_url"))
     # html = driver.page_source
     # driver.implicitly_wait(5)
@@ -37,6 +40,12 @@ def web_auth(username, password):
     button_submit.click()
 
     # Custom portal
+    # let everything needed loaded
+    time.sleep(int(os.getenv("sleep", 5)))
+
+    # stores original url
+    login_url = driver.current_url
+
     field_password = WebDriverWait(driver, ttl).until(
         EC.presence_of_element_located((By.XPATH, os.getenv("xpassword"))))
     field_password.send_keys(password)
@@ -44,10 +53,6 @@ def web_auth(username, password):
     button_submit = WebDriverWait(driver, ttl).until(
         EC.presence_of_element_located((By.XPATH, os.getenv("xsubmit2"))))
 
-    login_url = driver.current_url
-
-    # let everything needed loaded
-    driver.implicitly_wait(int(os.getenv("wait", 5)))
     button_submit.click()
 
     landed_url = driver.current_url.lower()
