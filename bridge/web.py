@@ -13,10 +13,10 @@ from dotenv import load_dotenv
 def web_auth(username, password):
     load_dotenv()
     options = Options()
-    if os.getenv("detach", False).lower() == 'true':
+    if os.getenv("detach", 'false').lower() == 'true':
         options.add_experimental_option("detach", True)
 
-    if os.getenv("headless", True).lower() == 'true':
+    if os.getenv("headless", 'true').lower() == 'true':
         options.add_argument('--headless')
 
     driver = webdriver.Chrome(options=options)
