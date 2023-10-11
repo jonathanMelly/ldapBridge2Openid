@@ -13,8 +13,13 @@ from dotenv import load_dotenv
 
 def web_auth(username, password):
     load_dotenv()
+    # from https://intoli.com/blog/making-chrome-headless-undetectable/
+    user_agent = os.getenv("ua", 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                                 'Chrome/60.0.3112.50 Safari/537.36')
+
     options = Options()
     options.add_argument("--incognito")
+    options.add_argument(f'user-agent={user_agent}')
 
     if os.getenv("detach", 'false').lower() == 'true':
         options.add_experimental_option("detach", True)
@@ -57,6 +62,6 @@ def web_auth(username, password):
 
     landed_url = driver.current_url.lower()
     # if login success => go to microsoft portal o365, otherwise stays on eduvaud sts
-    logging.log(logging.INFO, "Landed url for   " + username + ": " + landed_url)
+    logging.log(logging.INFO, f"Landed url for   {username}: {landed_url}")
 
     return landed_url != login_url and os.getenv("landed_url_pattern") in landed_url.lower()
