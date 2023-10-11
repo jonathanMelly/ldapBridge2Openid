@@ -1,4 +1,3 @@
-import os
 import traceback
 import ssl
 import socketserver
@@ -602,12 +601,6 @@ class LDAPRequestHandler(BaseLDAPRequestHandler):
 
 	#: :any:`ssl.SSLContext` for StartTLS
 	ssl_context = None
-
-	ssl_cert = os.getenv("ssl_cert")
-	if ssl_cert is not None:
-		ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-		ssl_key = os.getenv("ssl_key")
-		ssl_context.load_cert_chain(ssl_cert, keyfile=ssl_key)
 
 	@property
 	def supports_starttls(self):
