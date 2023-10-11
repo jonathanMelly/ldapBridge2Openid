@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 def web_auth(username, password):
     load_dotenv()
     options = Options()
+    options.add_argument("--incognito")
+
     if os.getenv("detach", 'false').lower() == 'true':
         options.add_experimental_option("detach", True)
 
