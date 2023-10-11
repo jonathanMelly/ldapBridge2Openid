@@ -22,14 +22,18 @@ def web_auth(username, password):
     driver = webdriver.Chrome(options=options)
     driver.get(os.getenv("portal_url"))
     # html = driver.page_source
+    driver.implicitly_wait(5)
 
-    field_username = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, os.getenv("xusername"))))
+    ttl = int(os.getenv("ttl", 30))
+
+    field_username = WebDriverWait(driver, ttl).until(
+        EC.presence_of_element_located((By.XPATH, os.getenv("xusername"))))
     field_username.send_keys(username)
 
     button_submit = driver.find_element(By.XPATH, os.getenv("xsubmit1"))
     button_submit.click()
 
-    field_password = WebDriverWait(driver, 5).until(
+    field_password = WebDriverWait(driver, ttl).until(
         EC.presence_of_element_located((By.XPATH, os.getenv("xpassword"))))
     field_password.send_keys(password)
 
