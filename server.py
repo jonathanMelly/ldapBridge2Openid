@@ -34,5 +34,5 @@ if __name__ == '__main__':
     loglevel = os.getenv("log", "INFO")
     logging.basicConfig(level=loglevel)
     logging.getLogger().setLevel(loglevel)
-    socketserver.ThreadingTCPServer((os.getenv("listen", '127.0.0.1'), int(os.getenv("port", 3890))),
-                                    RequestHandler).serve_forever()
+    socketserver.TCPServer((os.getenv("listen", '127.0.0.1'), int(os.getenv("port", 3890))),
+                           RequestHandler).serve_forever()

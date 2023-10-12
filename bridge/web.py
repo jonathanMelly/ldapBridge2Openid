@@ -1,6 +1,11 @@
 import logging
 import os
+import platform
 import shelve
+import bcrypt
+import cachetools
+import pickle
+import binascii
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
@@ -13,15 +18,30 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger()
 
+CACHE_FILE = "cache.pickle"
+
 
 def web_auth(username, password):
+    load_dotenv()
+
     logger.debug(f"WEB auth request for {username}")
 
-    cache = shelve.open("cache")
-    logger.debug(f"Cache loaded: {cache}")
-    cache.close()
+    salt = bytes.fromhex(os.getenv("salt", "2432622431322467316a566377314a35386e5336472e5a507270514a2e"))
 
-    load_dotenv()
+    hashed_username = bcrypt.hashpw(bytes(username, 'UTF-8'), salt).hex()
+    hashed_password = bcrypt.hashpw(bytes(password, 'UTF-8'), salt).hex()
+
+    if os.path.isfile(CACHE_FILE):
+        cache = pickle.load(open(CACHE_FILE, "rb"))
+        logger.debug(f"Cache loaded")
+    else:
+        logger.debug(f"Cache initialized")
+        cache = cachetools.TTLCache(maxsize=2345, ttl=60 * 60 * 12)
+
+    cached_entry = cache.get(hashed_username)
+    if cached_entry is not None and cached_entry == hashed_password:
+        logger.debug(f"Valid from cache")
+        return True
 
     options = Options()
     options.add_argument("--incognito")
@@ -92,7 +112,7 @@ def web_auth(username, password):
     button_submit.click()
     logger.debug("->DONE")
 
-    xlanded = os.getenv("xlanded",None)
+    xlanded = os.getenv("xlanded", None)
     if xlanded is not None:
         try:
             logger.debug(f"waiting for {xlanded}")
@@ -107,4 +127,11 @@ def web_auth(username, password):
     # if login success => go to microsoft portal o365, otherwise stays on eduvaud sts
     logger.debug(f"Landed url: {landed_url}")
 
-    return landed_url != login_url and os.getenv("landed_url_pattern") in landed_url.lower()
+    granted = landed_url != login_url and os.getenv("landed_url_pattern") in landed_url.lower()
+
+    logger.debug("user granted")
+
+    cache[hashed_username] = hashed_password
+    pickle.dump(cache, open(CACHE_FILE, "wb"))
+
+    return granted
