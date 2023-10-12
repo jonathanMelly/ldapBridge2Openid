@@ -92,13 +92,14 @@ def web_auth(username, password):
     button_submit.click()
     logger.debug("->DONE")
 
+    xlanded = os.getenv("xlanded")
     try:
-        xlanded = os.getenv("xlanded")
         logger.debug(f"waiting for {xlanded}")
         WebDriverWait(driver, ttl).until(EC.presence_of_element_located((By.XPATH, xlanded)))
         logger.debug("->DONE")
     except TimeoutException:
         logger.debug("->TIMEOUT")
+        logger.debug(f"cannot find {xlanded} in {driver.page_source}")
         return False
 
     landed_url = driver.current_url.lower()
