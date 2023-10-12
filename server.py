@@ -31,5 +31,10 @@ class RequestHandler(ldapserver.LDAPRequestHandler):
 
 if __name__ == '__main__':
     load_dotenv()
+    loglevel = os.getenv("log","INFO")
+    numeric_level = getattr(logging, loglevel.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % loglevel)
+    logging.basicConfig(level=numeric_level)
     socketserver.ThreadingTCPServer((os.getenv("listen", '127.0.0.1'), int(os.getenv("port", 3890))),
                                     RequestHandler).serve_forever()
