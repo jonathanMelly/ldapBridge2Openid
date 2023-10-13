@@ -2,8 +2,14 @@ import unittest
 import os
 import logging
 
-from web import web_auth
+from web import WebAuthenticator
 from dotenv import load_dotenv
+
+authenticator = WebAuthenticator()
+
+
+def web_auth(user, password):
+    authenticator.do_web_auth(user, password)
 
 
 class TestStringMethods(unittest.TestCase):

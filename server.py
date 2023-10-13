@@ -1,32 +1,22 @@
 import logging
 import os
 import socketserver
-import traceback
+
 
 import ldapserver
-from bridge.web import web_auth
-from ldapserver import exceptions
+from bridge.proxy import do_auth
+
 
 from dotenv import load_dotenv
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class RequestHandler(ldapserver.LDAPRequestHandler):
 
     def do_bind_simple_authenticated(self, dn, password):
-
-        try:
-            decoded_password = password.decode()
-            logging.log(logging.INFO, "Log attempt: " + dn)
-
-            valid = web_auth(dn, decoded_password)
-        except Exception:
-            traceback.print_exc()
-            raise exceptions.LDAPError
-
-        if not valid:
-            raise exceptions.LDAPInvalidCredentials
+        logger.info(f"BIND AUTH for dn: {dn}")
+        do_auth(dn, password.decode())
 
 
 if __name__ == '__main__':
@@ -34,5 +24,6 @@ if __name__ == '__main__':
     loglevel = os.getenv("log", "INFO")
     logging.basicConfig(level=loglevel)
     logging.getLogger().setLevel(loglevel)
-    socketserver.TCPServer((os.getenv("listen", '127.0.0.1'), int(os.getenv("port", 3890))),
-                           RequestHandler).serve_forever()
+
+    socketserver.ThreadingTCPServer((os.getenv("listen", '127.0.0.1'), int(os.getenv("port", 3890))),
+                                    RequestHandler).serve_forever()
