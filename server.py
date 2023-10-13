@@ -2,12 +2,10 @@ import logging
 import os
 import socketserver
 
+from dotenv import load_dotenv
 
 import ldapserver
-from bridge.proxy import do_auth
-
-
-from dotenv import load_dotenv
+from bridge.proxy import LdapProxy
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +13,8 @@ logger = logging.getLogger(__name__)
 class RequestHandler(ldapserver.LDAPRequestHandler):
 
     def do_bind_simple_authenticated(self, dn, password):
-        logger.info(f"BIND AUTH for dn: {dn}")
-        do_auth(dn, password.decode())
+        logger.info(f"BIND AUTH for dn: {dn}, passing to proxy")
+        LdapProxy().do_auth(dn, password.decode())
 
 
 if __name__ == '__main__':
