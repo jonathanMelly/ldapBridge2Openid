@@ -1,11 +1,11 @@
 repo_name: jonathanMelly/ldapBridge2Openid
-report_id: ddc349e5310e7172e149be68332104b6
+report_id: 29469668675d6ca1f78b3faee7e57db0
 repo_type: Public
-timestamp: '2023-11-13T13:09:47+00:00'
+timestamp: '2023-12-14T10:35:22+00:00'
 requested_by: jonathanMelly
 provider: github
 branch: main
-detected_tools_count: 3
+detected_tools_count: 2
 tools:
 - name: Python
   description: A clear and powerful object-oriented programming language, comparable
@@ -25,14 +25,4 @@ tools:
   category: Build, Test, Deploy
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
-  detection_source: Repo Metadata
-- name: Shell
-  description: A shell is a text-based terminal, used for manipulating programs and
-    files. Shell scripts typically manage program execution.
-  website_url: https://en.wikipedia.org/wiki/Shell_script
-  open_source: false
-  hosted_saas: false
-  category: Languages & Frameworks
-  sub_category: Languages
-  image_url: https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png
   detection_source: Repo Metadata
